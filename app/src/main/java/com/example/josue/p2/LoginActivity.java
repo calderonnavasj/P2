@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +89,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View view) {
                 attemptLogin();
+                UsuarioDBHelper helper = new UsuarioDBHelper(LoginActivity.this);
+                SQLiteDatabase database = helper.getReadableDatabase();
+                String login = UsuarioReaderContract.Usuario.COLUMN_LOGIN;
+                String psw = UsuarioReaderContract.Usuario.COLUMN_PASSWORD;
+                String login2 = mEmailView.getText().toString();
+                String psw2=mPasswordView.getText().toString();
+                Cursor c = database.rawQuery("SELECT "+login+ ", "+psw+" FROM "+UsuarioReaderContract.Usuario.TABLE_NAME, null);
+                if ((c.getString(0)).equals(login)&&c.getString(1).equals(psw))
+                {
+                    Toast.makeText(LoginActivity.this, "Ya ha sido registrado", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
