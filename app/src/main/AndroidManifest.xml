@@ -43,6 +43,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Fotografia"
+            android:label="@string/title_activity_fotografia"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

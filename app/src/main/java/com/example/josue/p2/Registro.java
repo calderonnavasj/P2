@@ -2,6 +2,7 @@ package com.example.josue.p2;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -31,15 +32,22 @@ public class Registro extends AppCompatActivity {
                 if(!pass.getText().toString().isEmpty()&&!nombre.getText().toString().isEmpty()&&!usuario.getText().toString().isEmpty()){
                     UsuarioDBHelper helper= new UsuarioDBHelper(Registro.this);
                     SQLiteDatabase database = helper.getWritableDatabase();
-                    ContentValues values= new ContentValues();
-                    values.put(UsuarioReaderContract.Usuario.COLUMN_LOGIN, usuario.getText().toString());
-                    values.put(UsuarioReaderContract.Usuario.COLUMN_NAME, nombre.getText().toString());
-                    values.put(UsuarioReaderContract.Usuario.COLUMN_PASSWORD, pass.getText().toString());
-                    long insert = database.insert(UsuarioReaderContract.Usuario.TABLE_NAME, null, values);
-                    database.close();
-                    Toast.makeText(Registro.this, "Usuario agregado exito.", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent("com.example.josue.p2.Registro");
-                    startActivity(intent);
+                    String login = UsuarioReaderContract.Usuario.COLUMN_LOGIN;
+                    String table = UsuarioReaderContract.Usuario.TABLE_NAME;
+                    String Nusuario = usuario.getText().toString();
+                    Cursor c = database.rawQuery("SELECT " +login+" FROM "+table+" WHERE "+login+"='"+Nusuario, null);
+                    if (!(c.getString(0)).isEmpty()){
+                        Toast.makeText(Registro.this, "Este correo ya ha sido usado. Elija otro.", Toast.LENGTH_SHORT).show();
+                    }else{
+                        ContentValues values= new ContentValues();
+                        values.put(UsuarioReaderContract.Usuario.COLUMN_LOGIN, usuario.getText().toString());
+                        values.put(UsuarioReaderContract.Usuario.COLUMN_NAME, nombre.getText().toString());
+                        values.put(UsuarioReaderContract.Usuario.COLUMN_PASSWORD, pass.getText().toString());
+                        long insert = database.insert(UsuarioReaderContract.Usuario.TABLE_NAME, null, values);
+                        database.close();
+                        Toast.makeText(Registro.this, "Usuario "+usuario.getText().toString()+" agregado éxito.", Toast.LENGTH_SHORT).show();
+                        finish();
+                    }
                 }else{
                     Toast.makeText(Registro.this, "Rellene todos los campos.", Toast.LENGTH_SHORT).show();
                 }

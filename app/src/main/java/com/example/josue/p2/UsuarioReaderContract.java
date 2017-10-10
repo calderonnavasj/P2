@@ -7,12 +7,12 @@ import android.provider.BaseColumns;
  */
 
 public class UsuarioReaderContract {
-    private UsuarioReaderContract(){}
+    public UsuarioReaderContract(){}
 
     public class Usuario implements BaseColumns{
         public static final String TABLE_NAME = "USUARIO";
         public static final String COLUMN_NAME = "NOMBRE";
-        public static final String COLUMN_LOGIN="N_USUARIO";
+        public static final String COLUMN_LOGIN="NUSUARIO";
         public static final String COLUMN_PASSWORD="CLAVE";
     }
 }
