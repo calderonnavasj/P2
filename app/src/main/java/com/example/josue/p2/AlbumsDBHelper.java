@@ -7,7 +7,7 @@ package com.example.josue.p2;
 public class AlbumsDBHelper {
 
     private static final int DATABASE_VERSION=1;
-    private static final String DATABASE_NAME="presupuestapp.db";
+    private static final String DATABASE_NAME="organizapp.db";
     private static final String create = "CREATE TABLE "+ UsuarioReaderContract.Usuario.TABLE_NAME
             + " ( " + UsuarioReaderContract.Usuario.COLUMN_LOGIN +" TEXT PRIMARY KEY, "+ UsuarioReaderContract.Usuario.COLUMN_NAME
             + " TEXT,"+UsuarioReaderContract.Usuario.COLUMN_PASSWORD + " TEXT)";
