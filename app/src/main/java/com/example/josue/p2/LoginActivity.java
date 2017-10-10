@@ -3,6 +3,7 @@ package com.example.josue.p2;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.annotation.NonNull;
@@ -88,21 +89,43 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                attemptLogin();
-                UsuarioDBHelper helper = new UsuarioDBHelper(LoginActivity.this);
-                SQLiteDatabase database = helper.getReadableDatabase();
-                String login = UsuarioReaderContract.Usuario.COLUMN_LOGIN;
-                String psw = UsuarioReaderContract.Usuario.COLUMN_PASSWORD;
-                String login2 = mEmailView.getText().toString();
-                String psw2=mPasswordView.getText().toString();
-                Cursor c = database.rawQuery("SELECT "+login+ ", "+psw+" FROM "+UsuarioReaderContract.Usuario.TABLE_NAME, null);
-                if ((c.getString(0)).equals(login)&&c.getString(1).equals(psw))
-                {
-                    Toast.makeText(LoginActivity.this, "Ya ha sido registrado", Toast.LENGTH_SHORT).show();
+                //attemptLogin();
+                Intent intent = new Intent("com.example.josue.p2.Fotografia");
+                startActivity(intent);
+                try {
+                    UsuarioDBHelper helper = new UsuarioDBHelper(LoginActivity.this);
+                    SQLiteDatabase database = helper.getReadableDatabase();
+                    String login = UsuarioReaderContract.Usuario.COLUMN_LOGIN;
+                    String psw = UsuarioReaderContract.Usuario.COLUMN_PASSWORD;
+                    String table = UsuarioReaderContract.Usuario.TABLE_NAME;
+                    String usuario = mEmailView.getText().toString();
+                    String contra = mPasswordView.getText().toString();
+                    Cursor c = database.rawQuery("SELECT " +login+", "+psw+" FROM "+table+" WHERE "+login+"='"+usuario+"' AND "+psw+"='"+contra+"'", null);
+                    if (c.moveToFirst()) {
+                        //Recorremos el cursor hasta que no haya más registros
+                        do {
+                            Toast.makeText(LoginActivity.this, c.getString(0)+" - "+c.getString(1), Toast.LENGTH_SHORT).show();
+                            if (!(c.getString(0)).isEmpty() && !(c.getString(1)).isEmpty()) {
+                                Toast.makeText(LoginActivity.this, "Ya ha sido registrado", Toast.LENGTH_SHORT).show();
+                            }else{
+                                Toast.makeText(LoginActivity.this, "Inténtelo de nuevo.", Toast.LENGTH_SHORT).show();
+                            }
+                        } while(c.moveToNext());
+                    }
+                    c.close();
+                }catch (Exception e){
+                    Toast.makeText(LoginActivity.this, "Error: "+e.toString(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
+        TextView editText = (TextView) findViewById(R.id.registrarse);
+        editText.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("com.example.josue.p2.Registro");
+                startActivity(intent);
+            }
+        });
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
     }
