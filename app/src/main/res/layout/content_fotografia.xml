@@ -6,6 +6,35 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.example.josue.p2.Fotografia"
-    tools:showIn="@layout/activity_fotografia">
+    tools:showIn="@layout/activity_fotografia"
+    tools:layout_editor_absoluteY="81dp"
+    tools:layout_editor_absoluteX="0dp">
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab2"
+        android:layout_width="57dp"
+        android:layout_height="57dp"
+        android:layout_gravity="bottom|end"
+        app:srcCompat="@android:drawable/presence_video_away"
+        android:layout_marginRight="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="82dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab3"
+        android:layout_width="59dp"
+        android:layout_height="59dp"
+        android:clickable="true"
+        app:fabSize="mini"
+        app:srcCompat="@android:drawable/ic_menu_upload_you_tube"
+        android:layout_marginRight="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_constraintBottom_creator="1"
+        app:layout_constraintBottom_toTopOf="@+id/fab2"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="23dp" />
 
 </android.support.constraint.ConstraintLayout>
