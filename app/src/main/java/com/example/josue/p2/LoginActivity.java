@@ -90,6 +90,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View view) {
                 //attemptLogin();
+                Intent intent = new Intent("com.example.josue.p2.Fotografia");
+                startActivity(intent);
                 try {
                     UsuarioDBHelper helper = new UsuarioDBHelper(LoginActivity.this);
                     SQLiteDatabase database = helper.getReadableDatabase();
