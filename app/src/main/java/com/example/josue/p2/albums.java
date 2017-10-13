@@ -5,9 +5,11 @@ package com.example.josue.p2;
  */
 
 public class albums {
-    public String nombre;
+    public static String nombre;
+    public static String nombreSeleccionado;
 
-    public albums(String nombre) {
+    public albums(String nombre,String nombreSeleccionado) {
         this.nombre = nombre;
+        this.nombreSeleccionado= nombreSeleccionado;
     }
 }

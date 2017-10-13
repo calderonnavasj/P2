@@ -2,16 +2,20 @@ package com.example.josue.p2;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -37,67 +41,65 @@ public class configAlbums extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_config_albums, container, false);
-
-        nombreCarpetas();
-        ListView listV= (ListView) rootView.findViewById(R.id.listView);
-        ArrayAdapter<String> fileList = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listCarpetas);
-        listV.setAdapter(fileList);
+        final ListView listV= (ListView) rootView.findViewById(R.id.listViewSho);
+        nombreCarpetas(listV);
 
         rootView.findViewById(R.id.addCarpeta).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EditText text = (EditText)rootView.findViewById(R.id.carpetaCrear);
+                albums.nombre  = text.getText().toString();
+                addAlbum(v);
 
-                File file = new File(getActivity().getExternalFilesDir(null), "Carpetas/"+rootView.findViewById(R.id.carpetaCrear));
-                if (!file.exists()) {
-                    file.mkdir();
-                    Toast.makeText(getActivity(), "Carpeta creada exitosamente!!", LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(getActivity(), "Carpeta no creada, ya existe!!", LENGTH_SHORT).show();
-                }
-                Toast.makeText(getActivity(), file.toString(), LENGTH_SHORT).show();
             }
         });
-        return rootView;
+        listV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //optiene el nombre de la carpeta selccionada.
+                albums.nombreSeleccionado=listV.getItemAtPosition(position).toString();
+                //carga la siguiente activity de la galería
+                Intent intent = new Intent(getActivity(), Fotografia.class);
+                startActivity(intent);
+            }
+        });
 
+        return rootView;
     }
 
-
-
-
-    public void nombreCarpetas() {
-
+    public void nombreCarpetas(ListView listV) {
+        //se crea un arraylist para el almacenamiento de las carpetas.
         listCarpetas = new ArrayList<String>();
-
-        File f = new File(Environment.getExternalStorageDirectory() + "Carpetas");
+        //se crea el argchivo con el nombre que tiene la carpeta donde contienen las carpetas.
+        File f = new File(getActivity().getExternalFilesDir(null),"Carpetas");
         File[] files = f.listFiles();
-
+        //recorre toda la carpeta para tomar todos sus datos.
         for (int i = 0; i < files.length; i++) {
             File file = files[i];
             if (file.isDirectory()) {
                 listCarpetas.add(file.getName());
             }
+        }if(listCarpetas.size()>0){//si la carpeta es vacía no hace nada, de lo contrario debe llenar el listview
+            ArrayAdapter<String>adapter = new ArrayAdapter<String>(getActivity(),R.layout.filelist,R.id.nombre_fila_lista,listCarpetas);
+            listV.setAdapter(adapter);
         }
+
     }
 
 
-    /*public void addAlbum(View view){
-        //File nuevaCarpeta = new File(getFilesDir(), "nuevaCarpeta");
-        //nuevaCarpeta.mkdirs();
-
-        Toast.makeText(getActivity(),"Text!",Toast.LENGTH_SHORT).show();
-        // Comprobamos si la carpeta está ya creada
-        File f = new File(Environment.getExternalStorageDirectory() + "/nuevaCarpeta");
-
-        // Si la carpeta no está creada, la creamos.
-        if(!f.isDirectory()) {
-            String newFolder = "/nuevaCarpeta"; //nuevaCarpeta es el nombre de la Carpeta que vamos a crear
-            String extStorageDirectory = Environment.getExternalStorageDirectory().toString();
-            File myNewFolder = new File(extStorageDirectory + newFolder);
-            myNewFolder.mkdir(); //creamos la carpeta
+    public void addAlbum(View view){
+        File file = new File(getActivity().getExternalFilesDir(null), "Carpetas/"+ albums.nombre);
+        if (!file.exists()&& albums.nombre!=null &&albums.nombre!=" ") {
+            file.mkdir();
+            Toast.makeText(getActivity(), "Carpeta creada exitosamente!!", LENGTH_SHORT).show();
         }else{
-            Toast.makeText(getActivity().getApplicationContext() , "Ya existe", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Carpeta no creada, ya existe o el espacio está en blanco!!", LENGTH_SHORT).show();
         }
-    }*/
+        //refresca el fragment en el que se encuentra
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(this).attach(this).commit();
+    }
+
 
 
 }
