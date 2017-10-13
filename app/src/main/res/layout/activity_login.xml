@@ -76,10 +76,11 @@
                 android:id="@+id/registrarse"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="¿No estás registrado? Click aquí"
+                android:text="¿No estás registrado?"
                 android:textStyle="bold"
                 android:layout_gravity="center"
-                android:textSize="@dimen/activity_horizontal_margin"/>
+                android:textSize="@dimen/activity_horizontal_margin"
+                android:textAppearance="?android:attr/textAppearanceSmall"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

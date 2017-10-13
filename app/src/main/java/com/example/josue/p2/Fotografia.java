@@ -1,7 +1,11 @@
 package com.example.josue.p2;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -11,12 +15,19 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.Toast;
 import java.io.File;
-import java.io.IOException;
+import java.io.FilenameFilter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Fotografia extends AppCompatActivity {
@@ -29,6 +40,9 @@ public class Fotografia extends AppCompatActivity {
     CoordinatorLayout coordinatorLayout;
     FloatingActionButton btnSelectImage;
     AppCompatImageView imgView;
+    private ImageAdapter imageAdapter;
+    ArrayList<String> f = new ArrayList<String>();// list of file paths
+    File[] listFile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +50,11 @@ public class Fotografia extends AppCompatActivity {
         setContentView(R.layout.activity_fotografia);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+//-----------------------Mostrar galería--------------------------------------
+        getFromSdcard();
+        GridView imagegrid = (GridView) findViewById(R.id.PhoneImageGrid);
+        imageAdapter = new ImageAdapter();
+        imagegrid.setAdapter(imageAdapter);
 //-----------------------Tomar fotografía-------------------------------------
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -67,8 +86,7 @@ public class Fotografia extends AppCompatActivity {
                 String FileName = "MP4_" + timeStamp + "_";
 
                 File mediaFile =
-                        new File(Environment.getExternalStorageDirectory().getAbsolutePath()
-                                + "/"+FileName+"mivideo.mp4");
+                        new File(Fotografia.this.getExternalFilesDir(null)+"/"+FileName+"mivideo.mp4");
 
                 Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 
@@ -78,46 +96,103 @@ public class Fotografia extends AppCompatActivity {
                 startActivityForResult(intent, VIDEO_CAPTURE);
             }
         });
+//-----------------------importar vídeo-------------------------------------
+        FloatingActionButton importar = (FloatingActionButton) findViewById(R.id.fab3);
+        importar.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Seleccionar imagen"), SELECT_PICTURE);
+            }
+        });
+    }
+
+    public void getFromSdcard()
+    {
+        File file= new File(this.getExternalFilesDir(null),Variables.NombreAlbum);
+
+        if (file.isDirectory())
+        {
+            try{
+                listFile = file.listFiles();
+                for (int i = 0; i < listFile.length; i++)
+                {
+                    f.add(listFile[i].getAbsolutePath());
+                }
+            }catch (Exception e){
+                Toast.makeText(this, "Error: " + e.toString()+" - ", Toast.LENGTH_SHORT).show();
+            }
+        }else{
+            Toast.makeText(this, "Dirección inválida:" + file.getAbsolutePath(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == VIDEO_CAPTURE) {
             if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Video saved to:\n" +
-                        data.getData(), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "El vídeo ha sido guardado", Toast.LENGTH_LONG).show();
             } else if (resultCode == RESULT_CANCELED) {
-                Toast.makeText(this, "Video recording cancelled.",
+                Toast.makeText(this, "Grabación cancelada.",
                         Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(this, "Failed to record video",Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "La grabación ha fallado.",Toast.LENGTH_LONG).show();
+            }
+        }
+        if (requestCode == IMAGE_CAPTURE) {
+            if (resultCode == RESULT_OK) {
+                Toast.makeText(this, "La imagen ha sido guardada.", Toast.LENGTH_LONG).show();
+            } else if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "Captura cancelada",                        Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "La captura ha fallado.",Toast.LENGTH_LONG).show();
             }
         }
     }
-    protected void onActivityResult2(int requestCode, int resultCode, Intent data) {
-        if (requestCode == IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            ImageView mImageView = new ImageView(this);
-            mImageView.setImageBitmap(imageBitmap);
+
+    public class ImageAdapter extends BaseAdapter {
+        private LayoutInflater mInflater;
+
+        public ImageAdapter() {
+            mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        public int getCount() {
+            return f.size();
+        }
+
+        public Object getItem(int position) {
+            return position;
+        }
+
+        public long getItemId(int position) {
+            return position;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            ViewHolder holder;
+            if (convertView == null) {
+                holder = new ViewHolder();
+                convertView = mInflater.inflate(
+                        R.layout.gelleryitem, null);
+                holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage);
+
+                convertView.setTag(holder);
+            }
+            else {
+                holder = (ViewHolder) convertView.getTag();
+            }
+
+
+            Bitmap myBitmap = BitmapFactory.decodeFile(f.get(position));
+            holder.imageview.setImageBitmap(myBitmap);
+            return convertView;
         }
     }
+    class ViewHolder {
+        ImageView imageview;
 
-    String mCurrentPhotoPath;
 
-    private File createImageFile() throws IOException {
-        // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        // Save a file: path for use with ACTION_VIEW intents
-        mCurrentPhotoPath = image.getAbsolutePath();
-        return image;
     }
-
 }
