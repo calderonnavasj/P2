@@ -90,7 +90,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View view) {
                 //attemptLogin();
-                Intent intent = new Intent("com.example.josue.p2.Fotografia");
+                Intent intent1 = new Intent("com.example.josue.p2.MainActivity");
+                startActivity(intent1);
+                /*Intent intent = new Intent("com.example.josue.p2.Fotografia");
                 startActivity(intent);
                 try {
                     UsuarioDBHelper helper = new UsuarioDBHelper(LoginActivity.this);
@@ -115,7 +117,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     c.close();
                 }catch (Exception e){
                     Toast.makeText(LoginActivity.this, "Error: "+e.toString(), Toast.LENGTH_SHORT).show();
-                }
+                }*/
             }
         });
         TextView editText = (TextView) findViewById(R.id.registrarse);
