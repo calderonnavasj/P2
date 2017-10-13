@@ -1,9 +1,12 @@
 package com.example.josue.p2;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -40,10 +43,10 @@ public class configAlbums extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         final View rootView = inflater.inflate(R.layout.fragment_config_albums, container, false);
         final ListView listV= (ListView) rootView.findViewById(R.id.listViewSho);
         nombreCarpetas(listV);
-
         rootView.findViewById(R.id.addCarpeta).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,11 +56,19 @@ public class configAlbums extends Fragment {
 
             }
         });
+        /*rootView.findViewById(R.id.eliminaAl).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteAlbum(v);
+
+            }
+        });*/
         listV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //optiene el nombre de la carpeta selccionada.
                 albums.nombreSeleccionado=listV.getItemAtPosition(position).toString();
+                //albums.rutaSelec = "Carpetas/"+albums.nombreSeleccionado;
                 //carga la siguiente activity de la galería
                 Intent intent = new Intent(getActivity(), Fotografia.class);
                 startActivity(intent);
@@ -83,23 +94,13 @@ public class configAlbums extends Fragment {
             ArrayAdapter<String>adapter = new ArrayAdapter<String>(getActivity(),R.layout.filelist,R.id.nombre_fila_lista,listCarpetas);
             listV.setAdapter(adapter);
         }
-
     }
 
-
     public void addAlbum(View view){
-        File file = new File(getActivity().getExternalFilesDir(null), "Carpetas/"+ albums.nombre);
-        if (!file.exists()&& albums.nombre!=null &&albums.nombre!=" ") {
-            file.mkdir();
-            Toast.makeText(getActivity(), "Carpeta creada exitosamente!!", LENGTH_SHORT).show();
-        }else{
-            Toast.makeText(getActivity(), "Carpeta no creada, ya existe o el espacio está en blanco!!", LENGTH_SHORT).show();
-        }
+        //llama al metodo que crea la carpeta
+        funcionAlbunes.agregaCarpeta(getActivity());
         //refresca el fragment en el que se encuentra
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.detach(this).attach(this).commit();
     }
-
-
-
 }
