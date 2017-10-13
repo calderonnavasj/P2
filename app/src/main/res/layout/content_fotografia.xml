@@ -46,5 +46,4 @@
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         android:verticalSpacing="10dp" />
-
 </android.support.constraint.ConstraintLayout>

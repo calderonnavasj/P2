@@ -1,5 +1,6 @@
 package com.example.josue.p2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -87,11 +88,14 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.albums) {
             fr = new configAlbums();
+        }else{
+            Intent intent = new Intent("com.example.josue.p2.Fotografia");
+            startActivity(intent);
         }
 
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.fragment3,fr);
+        transaction.replace(R.id.panelClean,fr);
         transaction.commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
