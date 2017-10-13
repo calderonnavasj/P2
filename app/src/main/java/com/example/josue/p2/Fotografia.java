@@ -115,6 +115,34 @@ public class Fotografia extends AppCompatActivity {
                 startActivityForResult(intent, VIDEO_CAPTURE);
             }
         });
+        //-----------------------Crear Carpeta Album-------------------------------------
+        FloatingActionButton creaCarpeta = (FloatingActionButton) findViewById(R.id.fab5);
+        creaCarpeta.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                addAlbum();
+                //refresca el activity para que tome la carpeta creada recientemente.
+                Intent refresh = new Intent(Fotografia.this,Fotografia.class);
+                startActivity(refresh);//Start the same Activity
+                finish();
+            }
+        });
+        //-----------------------Eliminar Carpeta Album-------------------------------------
+        FloatingActionButton delCarpeta = (FloatingActionButton) findViewById(R.id.fab4);
+        delCarpeta.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                File file = new File(Fotografia.this.getExternalFilesDir(null), "Carpetas/"+ albums.nombreSeleccionado);
+                if (file.exists()){
+                    File file2 = new File(getExternalFilesDir(null),"Carpetas/"+albums.nombreSeleccionado);
+                    funcionAlbunes.eliminaCarpeta(Fotografia.this,file2);
+                    //vuelve al fragment de albums.
+                    Intent intent = new Intent(Fotografia.this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        });
 //-----------------------importar vídeo-------------------------------------
         FloatingActionButton importar = (FloatingActionButton) findViewById(R.id.fab3);
         importar.setOnClickListener(new View.OnClickListener() {
@@ -128,6 +156,13 @@ public class Fotografia extends AppCompatActivity {
         });
     }
 
+
+    public void addAlbum(){
+        //llama al metodo que crea la carpeta
+        funcionAlbunes.agregaCarpeta(this);
+        //refresca el activity en el que se encuentra
+
+    }
 
     // array of supported extensions (use a List if you prefer)
     static final String[] EXTENSIONS = new String[]{
