@@ -335,7 +335,7 @@ public class Fotografia extends AppCompatActivity {
                             intent.setDataAndType(Uri.fromFile(new File(itemList.get(position))), "image/*");
                             startActivity(intent);
                         } catch (Exception e) {
-                            Toast.makeText(mContext, "Error al abrir: " + e.toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "Error al abrir:" + e.toString(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
