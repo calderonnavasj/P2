@@ -38,14 +38,16 @@ public class configAlbums extends Fragment {
         // Inflate the layout for this fragment
         final View rootView = inflater.inflate(R.layout.fragment_config_albums, container, false);
 
+        nombreCarpetas();
         ListView listV= (ListView) rootView.findViewById(R.id.listView);
         ArrayAdapter<String> fileList = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, listCarpetas);
+        listV.setAdapter(fileList);
 
         rootView.findViewById(R.id.addCarpeta).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                File file = new File(getActivity().getExternalFilesDir(null), "Carpetas/"+rootView.findViewById());
+                File file = new File(getActivity().getExternalFilesDir(null), "Carpetas/"+rootView.findViewById(R.id.carpetaCrear));
                 if (!file.exists()) {
                     file.mkdir();
                     Toast.makeText(getActivity(), "Carpeta creada exitosamente!!", LENGTH_SHORT).show();
@@ -59,34 +61,14 @@ public class configAlbums extends Fragment {
 
     }
 
-     public void llenaListView(){
-         //Localizamos y llenamos la lista
-         ListView lstOpciones = (ListView) findViewById(R.id.listaFiles);
-         ArrayAdapter<String> fileList = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, item);
-         lstOpciones.setAdapter(fileList);
-
-         // Accion para realizar al pulsar sobre la lista
-         lstOpciones.setOnItemClickListener(new OnItemClickListener() {
-
-             @Override
-             public void onItemClick(AdapterView<?> a, View v, int position,   long id) {
-
-                 // Devuelvo los datos a la activity principal
-                 Intent data = new Intent();
-                 data.putExtra("filename", item.get(position));
-                 setResult(RESULT_OK, data);
-                 finish();
-
-             }
-     }
 
 
 
-    public void nombreCarpetas(String ruta) {
+    public void nombreCarpetas() {
 
         listCarpetas = new ArrayList<String>();
 
-        File f = new File(Environment.getExternalStorageDirectory() + ruta);
+        File f = new File(Environment.getExternalStorageDirectory() + "Carpetas");
         File[] files = f.listFiles();
 
         for (int i = 0; i < files.length; i++) {

@@ -87,7 +87,7 @@
         android:layout_marginRight="16dp" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/carpetaCrear"
         android:layout_width="0dp"
         android:layout_height="43dp"
         android:ems="10"
