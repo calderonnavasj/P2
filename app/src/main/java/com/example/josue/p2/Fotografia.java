@@ -30,6 +30,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import static android.widget.Toast.LENGTH_SHORT;
+
 public class Fotografia extends AppCompatActivity {
 
     private static final int IMAGE_CAPTURE = 102;
@@ -50,6 +52,16 @@ public class Fotografia extends AppCompatActivity {
         setContentView(R.layout.activity_fotografia);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //Carpeta de prueba
+        File file = new File(Fotografia.this.getExternalFilesDir(null), Variables.NombreAlbum);
+        if (!file.exists()) {
+            file.mkdir();
+            Toast.makeText(Fotografia.this, "Carpeta creada exitosamente!!", LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(Fotografia.this, "Carpeta no creada, ya existe!!", LENGTH_SHORT).show();
+        }
+        Toast.makeText(Fotografia.this, file.toString(), LENGTH_SHORT).show();
+
 //-----------------------Mostrar galería--------------------------------------
         getFromSdcard();
         GridView imagegrid = (GridView) findViewById(R.id.PhoneImageGrid);
@@ -64,7 +76,7 @@ public class Fotografia extends AppCompatActivity {
                 String FileName = "PIC_" + timeStamp + "_";
 
                 File mediaFile =
-                        new File(Environment.getExternalStorageDirectory().getAbsolutePath()
+                        new File(Fotografia.this.getExternalFilesDir(null)
                                 + "/"+FileName+"mifoto.jpg");
 
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -85,8 +97,7 @@ public class Fotografia extends AppCompatActivity {
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                 String FileName = "MP4_" + timeStamp + "_";
 
-                File mediaFile =
-                        new File(Fotografia.this.getExternalFilesDir(null)+"/"+FileName+"mivideo.mp4");
+                File mediaFile=new File(Fotografia.this.getExternalFilesDir(null)+"/"+FileName+"mivideo.mp4");
 
                 Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
 

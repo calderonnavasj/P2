@@ -6,5 +6,5 @@ package com.example.josue.p2;
 
 public class Variables {
 
-    public static String NombreAlbum="";
+    public static String NombreAlbum="Prueba";
 }
