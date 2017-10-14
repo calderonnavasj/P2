@@ -43,7 +43,6 @@ public class configAlbums extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
         final View rootView = inflater.inflate(R.layout.fragment_config_albums, container, false);
         final ListView listV= (ListView) rootView.findViewById(R.id.listViewSho);
         nombreCarpetas(listV);
@@ -56,21 +55,13 @@ public class configAlbums extends Fragment {
 
             }
         });
-        /*rootView.findViewById(R.id.eliminaAl).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteAlbum(v);
-
-            }
-        });*/
         listV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //optiene el nombre de la carpeta selccionada.
                 albums.nombreSeleccionado=listV.getItemAtPosition(position).toString();
-                //albums.rutaSelec = "Carpetas/"+albums.nombreSeleccionado;
                 //carga la siguiente activity de la galería
-                Intent intent = new Intent(getActivity(), Fotografia.class);
+                Intent intent = new Intent("com.example.josue.p2.Fotografia");
                 startActivity(intent);
             }
         });
