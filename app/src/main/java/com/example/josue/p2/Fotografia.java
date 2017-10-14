@@ -1,7 +1,9 @@
 package com.example.josue.p2;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -10,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.media.ThumbnailUtils;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -63,7 +66,7 @@ public class Fotografia extends AppCompatActivity {
         setSupportActionBar(toolbar);
         obtenerImagenes();
         obtenerVideos();
-        File file = new File(Fotografia.this.getExternalFilesDir(null), Variables.NombreAlbum);
+        File file = new File(Fotografia.this.getExternalFilesDir(null), albums.nombreSeleccionado);
         if (!file.exists()) {
             file.mkdir();
             Toast.makeText(Fotografia.this, "Carpeta creada exitosamente", LENGTH_SHORT).show();
@@ -94,7 +97,7 @@ public class Fotografia extends AppCompatActivity {
             public void onClick(View view) {
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                 String FileName = "PIC_" + timeStamp + "_";
-                File mediaFile = new File(Fotografia.this.getExternalFilesDir(null) + "/" + Variables.NombreAlbum + "/" + FileName + "mifoto.jpg");
+                File mediaFile = new File(Fotografia.this.getExternalFilesDir(null) + "/" + albums.nombreSeleccionado + "/" + FileName + "mifoto.jpg");
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 Uri videoUri = Uri.fromFile(mediaFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
@@ -108,7 +111,7 @@ public class Fotografia extends AppCompatActivity {
             public void onClick(View v) {
                 String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                 String FileName = "MP4_" + timeStamp + "_";
-                File mediaFile = new File(Fotografia.this.getExternalFilesDir(null) + "/" + Variables.NombreAlbum + "/" + FileName + "mivideo.mp4");
+                File mediaFile = new File(Fotografia.this.getExternalFilesDir(null) + "/" + albums.nombreSeleccionado + "/" + FileName + "mivideo.mp4");
                 Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
                 Uri videoUri = Uri.fromFile(mediaFile);
                 intent.putExtra(MediaStore.EXTRA_OUTPUT, videoUri);
@@ -120,11 +123,7 @@ public class Fotografia extends AppCompatActivity {
         creaCarpeta.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                addAlbum();
-                //refresca el activity para que tome la carpeta creada recientemente.
-                Intent refresh = new Intent(Fotografia.this,Fotografia.class);
-                startActivity(refresh);//Start the same Activity
-                finish();
+                funcionAlbunes.agregaCarpeta2(Fotografia.this);
             }
         });
         //-----------------------Eliminar Carpeta Album-------------------------------------
@@ -132,14 +131,10 @@ public class Fotografia extends AppCompatActivity {
         delCarpeta.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                File file = new File(Fotografia.this.getExternalFilesDir(null), "Carpetas/"+ albums.nombreSeleccionado);
+                final File file = new File(Fotografia.this.getExternalFilesDir(null), "Carpetas/"+ albums.nombreSeleccionado);
+                Toast.makeText(Fotografia.this, "La carpeta "+albums.nombreSeleccionado+" esta eliminada", Toast.LENGTH_LONG).show();
                 if (file.exists()){
-                    File file2 = new File(getExternalFilesDir(null),"Carpetas/"+albums.nombreSeleccionado);
-                    funcionAlbunes.eliminaCarpeta(Fotografia.this,file2);
-                    //vuelve al fragment de albums.
-                    Intent intent = new Intent(Fotografia.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+                    funcionAlbunes.eliminaCarpeta(Fotografia.this,file);
                 }
             }
         });
@@ -154,14 +149,6 @@ public class Fotografia extends AppCompatActivity {
                 startActivityForResult(Intent.createChooser(intent, "Seleccionar imagen"), SELECT_PICTURE);
             }
         });
-    }
-
-
-    public void addAlbum(){
-        //llama al metodo que crea la carpeta
-        funcionAlbunes.agregaCarpeta(this);
-        //refresca el activity en el que se encuentra
-
     }
 
     // array of supported extensions (use a List if you prefer)
@@ -183,7 +170,7 @@ public class Fotografia extends AppCompatActivity {
 
     public void obtenerImagenes() {
         try {
-            File dir = new File(Fotografia.this.getExternalFilesDir(null) + "/" + Variables.NombreAlbum + "/");
+            File dir = new File(Fotografia.this.getExternalFilesDir(null) + "/" + albums.nombreSeleccionado + "/");
             File[] filelist = dir.listFiles(IMAGE_FILTER);
             for (File f : filelist) { // do your stuff here
                 PathImages.add(f.toString());
@@ -215,7 +202,7 @@ public class Fotografia extends AppCompatActivity {
 
     public void obtenerVideos() {
         try {
-            File dir = new File(Fotografia.this.getExternalFilesDir(null) + "/" + Variables.NombreAlbum + "/");
+            File dir = new File(Fotografia.this.getExternalFilesDir(null) + "/" + albums.nombreSeleccionado + "/");
             File[] filelist = dir.listFiles(VIDEO_FILTER);
             for (File f : filelist) { // do your stuff here
                 PathVideos.add(f.toString());
@@ -264,7 +251,7 @@ public class Fotografia extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            targetDirector = new File(Fotografia.this.getExternalFilesDir(null) + "/" + Variables.NombreAlbum);
+            targetDirector = new File(Fotografia.this.getExternalFilesDir(null) + "/" + albums.nombreSeleccionado);
             myTaskAdapter.clear();
 
             super.onPreExecute();
@@ -374,7 +361,7 @@ public class Fotografia extends AppCompatActivity {
                         }
                     }
                 });
-            }else{
+            }else if(itemList.get(position).contains(".mp4")){
                 imageView.setImageBitmap(ThumbnailUtils.createVideoThumbnail(itemList.get(position),0));
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
