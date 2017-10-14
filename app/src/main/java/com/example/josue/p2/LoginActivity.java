@@ -72,6 +72,28 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
+        TextView text = (TextView)findViewById(R.id.registrarse);
+        //text.setEnabled(false);
+        try {
+            UsuarioDBHelper helper = new UsuarioDBHelper(LoginActivity.this);
+            SQLiteDatabase database = helper.getReadableDatabase();
+            String table = UsuarioReaderContract.Usuario.TABLE_NAME;
+            Cursor c = database.rawQuery("SELECT * FROM "+table, null);
+            if (c.moveToFirst()) {
+                //Recorremos el cursor hasta que no haya más registros
+                do {
+                    Toast.makeText(LoginActivity.this, "Hay "+c.getCount(), Toast.LENGTH_SHORT).show();
+
+                    if (c.getCount()>0) {
+                        text.setEnabled(false);
+                    }
+                } while(c.moveToNext());
+            }
+            c.close();
+        }catch (Exception e){
+            Toast.makeText(LoginActivity.this, "Error: "+e.toString(), Toast.LENGTH_SHORT).show();
+        }
+
 
         mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -90,10 +112,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onClick(View view) {
                 //attemptLogin();
-                Intent intent1 = new Intent("com.example.josue.p2.MainActivity");
-                startActivity(intent1);
-                /*Intent intent = new Intent("com.example.josue.p2.Fotografia");
-                startActivity(intent);
                 try {
                     UsuarioDBHelper helper = new UsuarioDBHelper(LoginActivity.this);
                     SQLiteDatabase database = helper.getReadableDatabase();
@@ -106,18 +124,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     if (c.moveToFirst()) {
                         //Recorremos el cursor hasta que no haya más registros
                         do {
-                            Toast.makeText(LoginActivity.this, c.getString(0)+" - "+c.getString(1), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(LoginActivity.this, c.getString(0)+" - "+c.getString(1), Toast.LENGTH_SHORT).show();
                             if (!(c.getString(0)).isEmpty() && !(c.getString(1)).isEmpty()) {
-                                Toast.makeText(LoginActivity.this, "Ya ha sido registrado", Toast.LENGTH_SHORT).show();
+                                Intent intent1 = new Intent("com.example.josue.p2.MainActivity");
+                                startActivity(intent1);
                             }else{
-                                Toast.makeText(LoginActivity.this, "Inténtelo de nuevo.", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, "Datos incorrectos. Inténtelo de nuevo.", Toast.LENGTH_SHORT).show();
                             }
                         } while(c.moveToNext());
                     }
                     c.close();
                 }catch (Exception e){
                     Toast.makeText(LoginActivity.this, "Error: "+e.toString(), Toast.LENGTH_SHORT).show();
-                }*/
+                }
             }
         });
         TextView editText = (TextView) findViewById(R.id.registrarse);

@@ -11,9 +11,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class UsuarioDBHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION=1;
-    private static final String DATABASE_NAME="organizapp.db";
+    private static final String DATABASE_NAME="organizApp.db";
     private static final String create = "CREATE TABLE "+ UsuarioReaderContract.Usuario.TABLE_NAME
-            + " (" + UsuarioReaderContract.Usuario.COLUMN_LOGIN +" TEXT PRIMARY KEY, "+ UsuarioReaderContract.Usuario.COLUMN_NAME
+            + " ( " + UsuarioReaderContract.Usuario.COLUMN_LOGIN +" TEXT PRIMARY KEY, "+ UsuarioReaderContract.Usuario.COLUMN_NAME
             + " TEXT,"+UsuarioReaderContract.Usuario.COLUMN_PASSWORD + " TEXT)";
     private static final String upgrade ="DROP TABLE IF EXISTS "+UsuarioReaderContract.Usuario.TABLE_NAME;
 
@@ -23,11 +23,11 @@ public class UsuarioDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        db.execSQL(create);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        db.execSQL(upgrade);
     }
 }

@@ -29,27 +29,31 @@ public class Registro extends AppCompatActivity {
                 EditText pass = (EditText) findViewById(R.id.passsword);
                 EditText nombre = (EditText) findViewById(R.id.nombre);
                 EditText usuario = (EditText) findViewById(R.id.NUsuario);
-                if(!pass.getText().toString().isEmpty()&&!nombre.getText().toString().isEmpty()&&!usuario.getText().toString().isEmpty()){
-                    UsuarioDBHelper helper= new UsuarioDBHelper(Registro.this);
-                    SQLiteDatabase database = helper.getWritableDatabase();
-                    String login = UsuarioReaderContract.Usuario.COLUMN_LOGIN;
-                    String table = UsuarioReaderContract.Usuario.TABLE_NAME;
-                    String Nusuario = usuario.getText().toString();
-                    Cursor c = database.rawQuery("SELECT " +login+" FROM "+table+" WHERE "+login+"='"+Nusuario, null);
-                    if (!(c.getString(0)).isEmpty()){
-                        Toast.makeText(Registro.this, "Este correo ya ha sido usado. Elija otro.", Toast.LENGTH_SHORT).show();
-                    }else{
-                        ContentValues values= new ContentValues();
-                        values.put(UsuarioReaderContract.Usuario.COLUMN_LOGIN, usuario.getText().toString());
-                        values.put(UsuarioReaderContract.Usuario.COLUMN_NAME, nombre.getText().toString());
-                        values.put(UsuarioReaderContract.Usuario.COLUMN_PASSWORD, pass.getText().toString());
-                        long insert = database.insert(UsuarioReaderContract.Usuario.TABLE_NAME, null, values);
-                        database.close();
-                        Toast.makeText(Registro.this, "Usuario "+usuario.getText().toString()+" agregado éxito.", Toast.LENGTH_SHORT).show();
-                        finish();
+                try {
+                    if (!pass.getText().toString().isEmpty() && !nombre.getText().toString().isEmpty() && !usuario.getText().toString().isEmpty()) {
+                        UsuarioDBHelper helper = new UsuarioDBHelper(Registro.this);
+                        SQLiteDatabase database = helper.getWritableDatabase();
+                        String login = UsuarioReaderContract.Usuario.COLUMN_LOGIN;
+                        String table = UsuarioReaderContract.Usuario.TABLE_NAME;
+                        String Nusuario = usuario.getText().toString();
+                        Cursor c = database.rawQuery("SELECT " + login + " FROM " + table + " WHERE " + login + "='" + Nusuario + "'", null);
+                        if (c.getCount()>0) {
+                            Toast.makeText(Registro.this, "Este correo ya ha sido usado. Elija otro.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            ContentValues values = new ContentValues();
+                            values.put(UsuarioReaderContract.Usuario.COLUMN_LOGIN, usuario.getText().toString());
+                            values.put(UsuarioReaderContract.Usuario.COLUMN_NAME, nombre.getText().toString());
+                            values.put(UsuarioReaderContract.Usuario.COLUMN_PASSWORD, pass.getText().toString());
+                            long insert = database.insert(UsuarioReaderContract.Usuario.TABLE_NAME, null, values);
+                            database.close();
+                            Toast.makeText(Registro.this, "Usuario " + usuario.getText().toString() + " agregado éxito.", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    } else {
+                        Toast.makeText(Registro.this, "Rellene todos los campos.", Toast.LENGTH_SHORT).show();
                     }
-                }else{
-                    Toast.makeText(Registro.this, "Rellene todos los campos.", Toast.LENGTH_SHORT).show();
+                }catch (Exception e){
+                    Toast.makeText(Registro.this, "Error: "+e.toString(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
